@@ -1,0 +1,2336 @@
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/wally-rblx/uwuware-ui/main/main.lua", true))()
+local TrialScript = library:CreateWindow("Prison Life Trial")
+
+local I = TrialScript:AddFolder("General")
+local J = TrialScript:AddFolder("Admin")
+
+
+local uni = library:CreateWindow("Universal")
+
+
+   I:AddToggle({text = 'Strong Punch',state = false,callback = function(s)
+    
+    mainRemotes = game.ReplicatedStorage
+    meleeRemote = mainRemotes['meleeEvent']
+    mouse = game.Players.LocalPlayer:GetMouse()
+    punching = false
+    cooldown = false
+    
+    function punch()
+    cooldown = true
+    local part = Instance.new("Part", game.Players.LocalPlayer.Character)
+    part.Transparency = 1
+    part.Size = Vector3.new(5, 2, 3)
+    part.CanCollide = false
+    local w1 = Instance.new("Weld", part)
+    w1.Part0 = game.Players.LocalPlayer.Character.Torso
+    w1.Part1 = part
+    w1.C1 = CFrame.new(0,0,2)
+    part.Touched:connect(function(hit)
+    if game.Players:FindFirstChild(hit.Parent.Name) then
+    local plr = game.Players:FindFirstChild(hit.Parent.Name)
+    if plr.Name ~= game.Players.LocalPlayer.Name then
+    part:Destroy()
+    
+    for i = 1,100 do
+    meleeRemote:FireServer(plr)
+    end
+    end
+    end
+    end)
+    
+    wait(1)
+    cooldown = false
+    part:Destroy()
+    end
+    
+    
+    mouse.KeyDown:connect(function(key)
+    if cooldown == false then
+    if key:lower() == "f" then
+    
+    punch()
+    
+    end
+    end
+    end)
+
+   end})
+
+   I:AddToggle({text = 'Speed Punch',state = false,callback = function(s)
+    
+    while wait() do
+             
+        ---@diagnostic disable-next-line: undefined-global
+        getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isFighting = false
+
+
+end
+end})
+
+I:AddToggle({text = 'Fly [E]',state = false,callback = function(s)
+
+    repeat wait()
+    until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:findFirstChild("Torso") and game.Players.LocalPlayer.Character:findFirstChild("Humanoid")
+    local mouse = game.Players.LocalPlayer:GetMouse()
+    repeat wait() until mouse
+    local plr = game.Players.LocalPlayer
+    local torso = plr.Character.Torso
+    local deb = true
+    local ctrl = {f = 0, b = 0, l = 0, r = 0}
+    local lastctrl = {f = 0, b = 0, l = 0, r = 0}
+    local maxspeed = 50
+    local speed = 0
+    
+        function Fly()
+            local bg = Instance.new("BodyGyro", torso)
+            bg.P = 9e4
+            bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.cframe = torso.CFrame
+            local bv = Instance.new("BodyVelocity", torso)
+            bv.velocity = Vector3.new(0,0.1,0)
+            bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            repeat wait()
+            plr.Character.Humanoid.PlatformStand = true
+            if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+            speed = speed+.5+(speed/maxspeed)
+            if speed > maxspeed then
+            speed = maxspeed
+            end
+            elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
+            speed = speed-1
+            if speed < 0 then
+            speed = 0
+            end
+            end
+            if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+            bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+            lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
+            elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
+            bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+            else
+            bv.velocity = Vector3.new(0,0.1,0)
+            end
+            bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
+            until not flying
+            ctrl = {f = 0, b = 0, l = 0, r = 0}
+            lastctrl = {f = 0, b = 0, l = 0, r = 0}
+            speed = 0
+            bg:Destroy()
+            bv:Destroy()
+            plr.Character.Humanoid.PlatformStand = false
+            end
+            mouse.KeyDown:connect(function(key)
+            if key:lower() == "e" then
+            if flying then flying = false
+            else
+            flying = true
+            Fly()
+            end
+            elseif key:lower() == "w" then
+            ctrl.f = 1
+            elseif key:lower() == "s" then
+            ctrl.b = -1
+            elseif key:lower() == "a" then
+            ctrl.l = -1
+            elseif key:lower() == "d" then
+            ctrl.r = 1
+        end
+    end)
+        mouse.KeyUp:connect(function(key)
+        if key:lower() == "w" then
+        ctrl.f = 0
+        elseif key:lower() == "s" then
+        ctrl.b = 0
+        elseif key:lower() == "a" then
+        ctrl.l = 0
+        elseif key:lower() == "d" then
+        ctrl.r = 0
+        end
+        end)
+        Fly()
+
+
+end})
+
+I:AddButton({text = 'Get Guns',state = false,callback = function(s)
+
+
+    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP)
+    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["M9"].ITEMPICKUP)
+    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["AK-47"].ITEMPICKUP)
+    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["M4A1"].ITEMPICKUP)
+
+
+end})
+
+
+
+
+I:AddButton({text = 'Anti Fling',state = false,callback = function(s)
+    
+    while wait() do
+             
+        ---@diagnostic disable-next-line: undefined-global
+        getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isFighting = false
+
+
+end
+end})
+
+I:AddButton({text = 'Rejoin',state = false,callback = function(s)
+
+	local TeleportService = game:GetService("TeleportService")
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+	local Rejoin = coroutine.create(function()
+		local Success, ErrorMessage = pcall(function()
+			TeleportService:Teleport(game.PlaceId, LocalPlayer)
+		end)
+		if ErrorMessage and not Success then
+			warn(ErrorMessage)
+		end
+	end)
+	coroutine.resume(Rejoin)
+
+end})
+   
+   I:AddButton({text = 'Server Hop',state = false,callback = function(s)
+
+	local Servers = game.HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100"))
+	for i,v in pairs(Servers.data) do
+		if v.playing ~= v.maxPlayers then
+			game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, v.id)
+		end
+	end
+
+   end})
+
+   I:AddToggle({text = 'Noclip',state = false,callback = function(s)
+
+    local noclip = true char = game.Players.LocalPlayer.Character while true do if noclip == true then for _,v in pairs(char:children()) do pcall(function() if v.className == "Part" then v.CanCollide = false elseif v.ClassName == "Model" then v.Head.CanCollide = false end end) end end game:service("RunService").Stepped:wait() end
+
+
+end})
+
+
+
+I:AddToggle({text = 'Auto Respawn',state = false,callback = function(s)
+
+    _G.Loop = true
+    while _G.Loop == true do
+        wait()
+        if game.Players.LocalPlayer.Character.Humanoid.Health <= 15 then
+            local location = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            local A_1 = "\66\114\111\121\111\117\98\97\100\100"
+            local Event = game:GetService("Workspace").Remote.loadchar
+            Event:InvokeServer(A_1)
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = location
+        end
+    end
+
+
+end})
+
+J:AddButton({text = 'Trial Admin Commands',state = false,callback = function(s)
+
+ -- // Gui Boot, IGNORE
+
+local LoadUi = Instance.new("ScreenGui")
+local YourProfile = Instance.new("ImageLabel")
+local UICorner = Instance.new("UICorner")
+local Line = Instance.new("Frame")
+local Green = Instance.new("Frame")
+LoadUi.Name = "LoadUi"
+LoadUi.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+LoadUi.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+YourProfile.Name = "YourProfile"
+YourProfile.Parent = LoadUi
+YourProfile.AnchorPoint = Vector2.new(0.5, 0.5)
+YourProfile.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+YourProfile.BorderColor3 = Color3.fromRGB(15, 15, 15)
+YourProfile.Position = UDim2.new(0.5, 0, 0.5, 0)
+YourProfile.Size = UDim2.new(0, 0, 0, 0)
+YourProfile.BackgroundTransparency = 1
+YourProfile.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+UICorner.CornerRadius = UDim.new(1, 0)
+UICorner.Parent = YourProfile
+local function DPPJ_fake_script() -- YourProfile.Img 
+	local script = Instance.new('LocalScript', YourProfile)
+
+	local player = game.Players.LocalPlayer
+	
+	script.Parent.Image = game.Players:GetUserThumbnailAsync(player.userId, "HeadShot", "Size420x420")
+end
+coroutine.wrap(DPPJ_fake_script)()
+local function LMQBF_fake_script() -- LoadUi.Animations 
+	local script = Instance.new('LocalScript', LoadUi)
+
+	local ts = game:GetService("TweenService")
+	local ti = TweenInfo.new(0.5,Enum.EasingStyle.Cubic)
+	
+	wait(2)
+	
+	local YourProf = script.Parent.YourProfile
+	
+	local Y_Fade = ts:Create(YourProf,ti,{ImageTransparency = 1})
+	local Y2_Fade = ts:Create(YourProf,ti,{BackgroundTransparency = 1})
+	Y2_Fade:Play()
+	Y_Fade:Play()
+	local Y_Size = ts:Create(YourProf,ti,{Size = UDim2.new(0,10000,0,10000)})
+	Y_Size:Play()
+end
+coroutine.wrap(LMQBF_fake_script)()
+
+-- // Customizable
+
+local Prefix = "."
+
+-- // Custom Chat Shit
+
+local PlayUi = game.Players.LocalPlayer.PlayerGui
+local ChatUi = PlayUi:FindFirstChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.TextLabel
+
+ChatUi.Text = "Sin's current prefix: "..Prefix
+
+-- // Do not change
+
+local Vers = "2.8b"
+local Dev = "vixoau"
+
+local LP = game.Players.LocalPlayer
+local Workspace = game.Workspace
+
+local function GetPos()
+	return game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+end
+ 
+local function GetCamPos()
+	return workspace.CurrentCamera.CFrame
+end
+
+-- // Notifications
+
+function talk(words)
+    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(words,"all")
+end
+
+function notif(title,desc)
+    local COPY_DELETE_AFTER_ANIM = Instance.new("ScreenGui")
+    local messageGui = Instance.new("Frame")
+    local ImageLabel = Instance.new("ImageLabel")
+    local Title = Instance.new("TextLabel")
+    local Desc = Instance.new("TextLabel")
+    COPY_DELETE_AFTER_ANIM.Name = "COPY_DELETE_AFTER_ANIM"
+    COPY_DELETE_AFTER_ANIM.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    COPY_DELETE_AFTER_ANIM.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    messageGui.Name = "messageGui"
+    messageGui.Parent = COPY_DELETE_AFTER_ANIM
+    messageGui.AnchorPoint = Vector2.new(0.5, 0.5)
+    messageGui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    messageGui.BackgroundTransparency = 0.400
+    messageGui.BorderColor3 = Color3.fromRGB(53, 53, 53)
+    messageGui.Position = UDim2.new(0.5, 0, 0.248999998, 0)
+    messageGui.Size = UDim2.new(0, 1920, 0, 94)
+    ImageLabel.Parent = messageGui
+    ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ImageLabel.BackgroundTransparency = 1.000
+    ImageLabel.Size = UDim2.new(0, 1920, 0, 94)
+    ImageLabel.Image = "rbxassetid://267232285"
+    ImageLabel.ImageTransparency = 0.500
+    Title.Name = "Title"
+    Title.Parent = messageGui
+    Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Title.BackgroundTransparency = 1.000
+    Title.Size = UDim2.new(0, 1920, 0, 51)
+    Title.Font = Enum.Font.SourceSansBold
+    Title.Text = "PRISON ANNOUNCEMENT"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextScaled = true
+    Title.TextSize = 14.000
+    Title.TextStrokeTransparency = 0.000
+    Title.TextWrapped = true
+    Desc.Name = "Desc"
+    Desc.Parent = messageGui
+    Desc.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Desc.BackgroundTransparency = 1.000
+    Desc.Position = UDim2.new(0, 0, 0.5, 0)
+    Desc.Size = UDim2.new(0, 1920, 0, 47)
+    Desc.Font = Enum.Font.SourceSans
+    Desc.Text = "All prisoners must report to the cafeteria for dinner."
+    Desc.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Desc.TextScaled = true
+    Desc.TextSize = 14.000
+    Desc.TextWrapped = true
+
+    local function AnimationScript()
+        local script = Instance.new('LocalScript', COPY_DELETE_AFTER_ANIM)
+
+        -- Script made by KingSuno#9767
+        
+        -- Variables
+        
+        local messageGui = script.Parent.messageGui
+        local Desc = messageGui.Desc
+        local Title = Desc.Parent.Title
+        
+        -- Defaults
+        
+        messageGui.Position = UDim2.new(0.5,0,-0.5,0)
+        
+        -- Text Changing
+        
+        Title.Text = title
+        Desc.Text = desc
+        
+        -- Services
+        
+        local ts = game:GetService("TweenService")
+        local ti = TweenInfo.new(1.75,Enum.EasingStyle.Circular,Enum.EasingDirection.InOut)
+        
+        -- Animating
+        
+        local Tween = ts:Create(messageGui,ti,{Position = UDim2.new(0.5, 0,0.249, 0)})
+        Tween:Play()
+        
+        wait(4.5)
+        
+        local OutTween = ts:Create(messageGui,ti,{Position = UDim2.new(0.5, 0,-0.5, 0)})
+        OutTween:Play()
+
+        wait(1)
+
+        COPY_DELETE_AFTER_ANIM:Destroy() -- Removes the Gui
+        
+        -- End of script (:
+        
+    end
+    coroutine.wrap(AnimationScript)()
+end
+
+function othernotif(title,desc,img,time)
+    game.StarterGui:SetCore("SendNotification",{
+        Title = title;
+        Text = desc;
+        Icon = img;
+        Duration = time;
+    })
+end
+
+-- // Functions
+
+function findplayer(String)
+    if not String then return end
+    local Yes = {}
+    for _, Player in ipairs(game.Players:GetPlayers()) do
+        if string.lower(Player.Name):match(string.lower(String)) or string.lower(Player.DisplayName):match(string.lower(String)) then
+            table.insert(Yes, Player)
+        end
+    end
+    if #Yes > 0 then
+        return Yes[1]
+    elseif #Yes < 1 then
+        return nil
+    end
+end
+
+function Load(https)
+    loadstring(game:HttpGetAsync(https))()
+end
+
+function chatnotify(text,rgb)
+    game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage",{
+        Text = (text);
+        Color = rgb;
+        Font = Enum.Font.SourceSansBold; 
+        FontSize = Enum.FontSize.Size18;
+    })
+end
+
+-- // Icons
+
+local Valid = "http://www.roblox.com/asset/?id=4914902889";
+local Invalid = "http://www.roblox.com/asset/?id=132769588";
+
+local Owner = game.Players:GetUserThumbnailAsync(561742288, "HeadShot", "Size420x420");
+local CoOwner = game.Players:GetUserThumbnailAsync(1792747902, "HeadShot", "Size420x420");
+
+-- // Credits
+
+--[[
+
+    Some functions were not made by me!
+    Credits goes to the original devs.
+
+    General script + admin commands were made by me;
+    Do not take script as your own, i dont like that D:
+
+]]
+
+-- // Supported Games
+
+Games = {
+    ["PrisonLife"] = 155615604,
+    ["R6Baseplate"] = 4917051373
+}
+
+-- // Game Checking
+
+if game.PlaceId == Games.PrisonLife then
+
+    -- // Customizable
+
+    local Void = CFrame.new(999999, 999999, 999999)
+    local Trap = CFrame.new(-346.800995, 84.2401199, 1970.80005, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+    local Base = CFrame.new(-943.283997, 94.1287613, 2057.86011, 1, 7.36142525e-09, -1.57051008e-13, -7.36142525e-09, 1, -1.28909488e-08, 1.56956113e-13, 1.28909488e-08, 1)
+    local Prison = CFrame.new(906.399658, 100.638306, 2388.50073, -1, 0, 0, 0, 1, 0, 0, 0, -1)
+    local Yard = CFrame.new(782.20697, 97.9999008, 2468.15991, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+    local Armory = CFrame.new(836.43811, 99.9899826, 2284.13965, -0.999900043, 3.05707992e-08, 0.0141399782, 2.92557178e-08, 1, -9.32113906e-08, -0.0141399782, -9.27883974e-08, -0.999900043)
+    local Hell = CFrame.new(-584.465149, 10.8399096, 1434.67139, 0.0703570694, -2.91384534e-08, 0.997521877, -2.77830541e-08, 1, 3.11704333e-08, -0.997521877, -2.99072624e-08, 0.0703570694)
+
+    local Nexus = CFrame.new(888, 100, 2388)
+    local Cafe = CFrame.new(888, 100, 2388)
+    local BackNexus = CFrame.new(982, 100, 2334)
+    local Gate = CFrame.new(505, 103, 2250)
+    local Tower = CFrame.new(822, 131, 2588)
+    local GateTower = CFrame.new(502, 126, 2306)
+    local Sewer = CFrame.new(916, 79, 2311)
+
+    -- // Other
+
+    local function GetTeam()
+        return game.Players.LocalPlayer.TeamColor.Name
+    end
+
+    -- // Configure
+
+    Admin = {}
+
+    -- // Notifying
+
+    notif("VERSION","You're currently running Sin Version: "..Vers.."!")
+
+    -- // Toggles
+
+    _G.LoopKill = false
+    _G.LoopBring = false
+    _G.LoopTo = false
+    _G.AutoGuns = false
+    _G.SpamArrest = false
+    _G.SpamVoid = false
+
+    -- // Defining
+
+    local Backpack = LP.Backpack
+    Clipon = false
+
+    -- // Grabbing the Tag
+
+    LP.Character:BreakJoints() -- Kills.
+
+    -- // General Importance
+
+    local Workspace = game:GetService("Workspace")
+
+    -- // Team Changer
+
+    local savedcf = GetPos()
+    local savedcamcf = GetCamPos()
+    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("White").Name)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+    workspace.CurrentCamera.CFrame = savedcamcf
+
+    -- // Cmd Functions
+
+    function Teleport(Player, Position)
+        if Player == nil or Position == nil then return end
+        local savedcf = GetPos()
+        workspace.Remote.loadchar:InvokeServer()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+        workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single["Crude Knife"].ITEMPICKUP)
+        local CHAR = game.Players.LocalPlayer.Character
+        CHAR.Humanoid.Name = "1"
+        local c = CHAR["1"]:Clone()
+        c.Name = "Humanoid"
+        c.Parent = CHAR
+        CHAR["1"]:Destroy()
+        game.Workspace.CurrentCamera.CameraSubject = CHAR
+        CHAR.Animate.Disabled = true
+        wait()
+        CHAR.Animate.Disabled = false
+        CHAR.Humanoid.DisplayDistanceType = "None"
+        game.Players.LocalPlayer:FindFirstChild("Backpack"):FindFirstChild("Crude Knife").Parent = CHAR
+        local STOP = 0
+        repeat wait(.3)
+            STOP = STOP + 1
+            Player.Character.HumanoidRootPart.CFrame = LP.Character.HumanoidRootPart.CFrame
+        until (not game.Players.LocalPlayer.Character:FindFirstChild("Crude Knife") or not game.Players.LocalPlayer.Character.HumanoidRootPart or not Player.Character.HumanoidRootPart or not game.Players.LocalPlayer.Character.HumanoidRootPart.Parent or not Player.Character.HumanoidRootPart.Parent or STOP > 500) and STOP > 3
+        local STOP_2 = 0
+        repeat wait()
+            STOP_2 = STOP_2 + 1
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Position
+        until STOP_2 > 10
+        workspace.Remote.loadchar:InvokeServer()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+    end
+
+    function ArrestEvent(Player, Time)
+        for i = 1,Time do
+            workspace.Remote.arrest:InvokeServer(Player.Character.Head)
+        end
+    end
+    
+    function Arrest(Player, Time)
+        local Time = Time or 1
+        local savedcf = GetPos()
+        local savedcamcf = GetCamPos()
+        local savedteam = GetTeam()
+        if Player then
+            repeat wait()
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
+                for i = 1,Time do
+                    coroutine.wrap(function()
+                        workspace.Remote.arrest:InvokeServer(Player.Character.Head)
+                    end)()
+                end
+            until Player.Character:FindFirstChild("Head"):FindFirstChild("handcuffedGui")
+            wait()
+        end
+        workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new(savedteam).Name)
+        game.Players.LocalPlayer.Character.Humanoid.Sit = false
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+        workspace.CurrentCamera.CFrame = savedcamcf
+    end
+
+    function Kill(Player)
+        pcall(function()
+            workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP)
+            local Gun = game.Players.LocalPlayer.Backpack:FindFirstChild("Remington 870") or game.Players.LocalPlayer.Character:FindFirstChild("Remington 870")
+            local FireEvent = {
+                [1] = {
+                    ["RayObject"] = Ray.new(Vector3.new(), Vector3.new()), 
+                    ["Distance"] = 0, 
+                    ["Cframe"] = CFrame.new(), 
+                    ["Hit"] = workspace[Player.Name].Head
+                }, [2] = {
+                    ["RayObject"] = Ray.new(Vector3.new(), Vector3.new()), 
+                    ["Distance"] = 0, 
+                    ["Cframe"] = CFrame.new(), 
+                    ["Hit"] = workspace[Player.Name].Head
+                }, [3] = {
+                    ["RayObject"] = Ray.new(Vector3.new(), Vector3.new()), 
+                    ["Distance"] = 0, 
+                    ["Cframe"] = CFrame.new(), 
+                    ["Hit"] = workspace[Player.Name].Head
+                }, [4] = {
+                    ["RayObject"] = Ray.new(Vector3.new(), Vector3.new()), 
+                    ["Distance"] = 0, 
+                    ["Cframe"] = CFrame.new(), 
+                    ["Hit"] = workspace[Player.Name].Head
+                }, [5] = {
+                    ["RayObject"] = Ray.new(Vector3.new(), Vector3.new()), 
+                    ["Distance"] = 0, 
+                    ["Cframe"] = CFrame.new(), 
+                    ["Hit"] = workspace[Player.Name].Head
+                }
+            }
+            game:GetService("ReplicatedStorage").ShootEvent:FireServer(FireEvent,Gun)
+            Gun.Parent = LP.Character
+            game.Players.LocalPlayer.Character["Remington 870"].Parent = game.ServerStorage
+        end)
+    end
+
+    function CheckPermissions(Player)
+        Player.Chatted:Connect(function(Message)
+            if Admin[Player.UserId] then
+                AdminPlayerChatted(Message, Player)
+            end
+        end)
+    end
+
+    function AdminPlayerChatted(Message, Player)
+        local args = Message:split(" ")
+        local rankedcmds = args[1]
+        local Aimed = findplayer(args[2])
+        if rankedcmds == Prefix.."cmds" or rankedcmds == Prefix.."commands" then
+            talk("Prefix is "..Prefix.." | Commands: base, yard, void [plr], prison, armory, kill [all, team, plr], arrest [all, plr], to / goto [plr], bring [plr], nexus, cafe, back-nexus, gate, tower, gate-tower, sewer")
+        end
+        if rankedcmds == Prefix.."base" then
+            Teleport(Player,Base)
+        end
+        if rankedcmds == Prefix.."yard" then
+            Teleport(Player,Yard)
+        end
+        if rankedcmds == Prefix.."void" then
+            local targ = findplayer(args[2])
+            Teleport(targ,Void)
+        end
+        if rankedcmds == Prefix.."prison" then
+            Teleport(Player,Prison)
+        end
+        if rankedcmds == Prefix.."armory" then
+            Teleport(Player,Armory)
+        end
+        if rankedcmds == Prefix.."kill" then
+            if args[2]:lower() == "all" then
+                for i,v in pairs(game.Players:GetPlayers()) do
+                    if v ~= game.Players.LocalPlayer then
+                        Kill(v)
+                    end
+                end
+            elseif args[2]:lower() == "others" then
+                for i,v in pairs(game.Players:GetPlayers()) do
+                    if v ~= game.Players.LocalPlayer then
+                        Kill(v)
+                    end
+                end
+            elseif args[2]:lower() == "inmates" or args[2]:lower() == "prisoners" then
+                for i,v in pairs(game.Players:GetPlayers()) do
+                    if v ~= game.Players.LocalPlayer then
+                        if v.TeamColor.Name == "Bright orange" then
+                            Kill(v)
+                        end
+                    end
+                end
+            elseif args[2]:lower() == "cops" or args[2]:lower() == "police" or args[2]:lower() == "guards" then
+                for i,v in pairs(game.Players:GetPlayers()) do
+                    if v ~= game.Players.LocalPlayer then
+                        if v.TeamColor.Name == "Bright blue" then
+                            Kill(v)
+                        end
+                    end
+                end
+            elseif args[2]:lower() == "crims" or args[2]:lower() == "criminals" then
+                for i,v in pairs(game.Players:GetPlayers()) do
+                    if v ~= game.Players.LocalPlayer then
+                        if v.TeamColor.Name == "Really red" then
+                            Kill(v)
+                        end
+                    end
+                end
+            else
+                Kill(findplayer(args[2]))
+            end
+        end
+        if rankedcmds == Prefix.."arrest" then
+            if args[2]:lower() == "all" or args[2]:lower() == "others" then
+                for i,v in pairs(game.Players:GetPlayers()) do
+                    if v ~= game.Players.LocalPlayer then
+                        if v.TeamColor.Name == "Really red" then
+                            Arrest(v, 30)
+                        end
+                    end
+                end
+            else
+                Arrest(findplayer(args[2]))
+            end
+        end
+        if rankedcmds == Prefix.."to" or rankedcmds == Prefix.."goto" then
+            local targ = findplayer(args[2])
+            Teleport(Player,targ.Character.HumanoidRootPart.CFrame)
+        end
+        if rankedcmds == Prefix.."bring" then
+            Teleport(findplayer(args[2]),Player.Character.HumanoidRootPart.CFrame)
+        end
+        if rankedcmds == Prefix.."nexus" then
+            Teleport(Player,Nexus)
+        end
+        if rankedcmds == Prefix.."cafe" then
+            Teleport(Player,Cafe)
+        end
+        if rankedcmds == Prefix.."back-nexus" then
+            Teleport(Player,BackNexus)
+        end
+        if rankedcmds == Prefix.."gate" then
+            Teleport(Player,Gate)
+        end
+        if rankedcmds == Prefix.."tower" then
+            Teleport(Player,Tower)
+        end
+        if rankedcmds == Prefix.."gate-tower" then
+            Teleport(Player,GateTower)
+        end
+        if rankedcmds == Prefix.."sewer" then
+            Teleport(Player,Sewer)
+        end
+    end
+
+    for i,v in pairs(game.Players:GetPlayers()) do
+        if v ~= game.Players.LocalPlayer then
+            CheckPermissions(v)
+        end
+    end
+
+    -- // Cmds
+
+    LP.Chatted:Connect(function(msg,Player)
+        local args = msg:split(" ")
+        local cmd = args[1]
+
+        local Aimed = findplayer(args[2])
+
+        if cmd == Prefix.."cmds" or cmd == Prefix.."commands" then
+            local Commands = Instance.new("ScreenGui")
+            local Area = Instance.new("Frame")
+            local UICorner = Instance.new("UICorner")
+            local Back = Instance.new("Frame")
+            local UICorner_2 = Instance.new("UICorner")
+            local Items = Instance.new("ScrollingFrame")
+            local UIListLayout = Instance.new("UIListLayout")
+            Commands.Name = "Commands"
+            Commands.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+            Commands.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+            Area.Name = "Area"
+            Area.Parent = Commands
+            Area.AnchorPoint = Vector2.new(0.5, 0.5)
+            Area.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            Area.BackgroundTransparency = 0.800
+            Area.Position = UDim2.new(0.5, 0, 2, 0)
+            Area.Size = UDim2.new(0, 331, 0, 331)
+
+            UICorner.CornerRadius = UDim.new(0, 3)
+            UICorner.Parent = Area
+
+            Back.Name = "Back"
+            Back.Parent = Commands
+            Back.AnchorPoint = Vector2.new(0.5, 0.5)
+            Back.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+            Back.Position = UDim2.new(0.5, 0, 2, 0)
+            Back.Size = UDim2.new(0, 325, 0, 325)
+
+            UICorner_2.CornerRadius = UDim.new(0, 3)
+            UICorner_2.Parent = Back
+
+            Items.Name = "Items"
+            Items.Parent = Back
+            Items.Active = true
+            Items.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            Items.BackgroundTransparency = 1.000
+            Items.Position = UDim2.new(0.0276923068, 0, 0.0338461548, 0)
+            Items.Size = UDim2.new(0, 307, 0, 302)
+            Items.CanvasSize = UDim2.new(0, 0, 3.65, 0)
+            Items.ScrollBarThickness = 0
+
+            UIListLayout.Parent = Items
+            UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+            UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            local function YYHNVQ_fake_script() -- Commands.Cmd 
+                local script = Instance.new('LocalScript', Commands)
+
+                local c = {}
+                
+                function c(text)
+                    local Command = Instance.new("TextLabel")
+                    Command.Name = "Command"
+                    Command.Parent = game.Players.LocalPlayer.PlayerGui.Commands.Back.Items
+                    Command.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    Command.BackgroundTransparency = 1.000
+                    Command.Position = UDim2.new(0.174267098, 0, 0, 0)
+                    Command.Size = UDim2.new(0, 200, 0, 29)
+                    Command.Font = Enum.Font.GothamSemibold
+                    Command.Text = text
+                    Command.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    Command.TextSize = 14.000
+                end
+                
+                c("cmds / commands")
+                c("hidecmds")
+                c("rejoin / rj / rej")
+                c("serverhop / hop / sh")
+                c("devs")
+                c("noclip [other: clip]")
+                c("leave / quit")
+                c("crim / criminal [all, plr]")
+                c("to / goto [plr]")
+                c("yard")
+                c("prison")
+                c("armory")
+                c("kill [all, team, plr]")
+                c("bring [all, team, plr]")
+                c("base")
+                c("void")
+                c("arrest [all, plr]")
+                c("loopkill / lk [all, team, plr]")
+                c("unloopkill / unlk [all, team, plr]")
+                c("loopbring / lb [all, team, plr]")
+                c("unloopbring / unlb [all, team, plr]")
+                c("key")
+                c("refresh / ref / re")
+                c("color / rgb [color]")
+                c("loopgoto / loopto [plr]")
+                c("guns")
+                c("autoguns [other: noautoguns / unautoguns]")
+                c("spamarrest / autoarrest [all, plr]")
+                c("unspamarrest / unautoarrest [all, team, plr]")
+                c("spamvoid / autovoid [all, team, plr]")
+                c("unspamvoid / unautovoid [all, team, plr]")
+                c("clearloops / removeloops")
+                c("admin / rank [plr]")
+                c("unadmin / unrank [plr]")
+                c("nexus")
+                c("backnexus")
+                c("cafe")
+                c("gate")
+                c("tower")
+                c("gatetower")
+                c("sewer")
+            end
+            coroutine.wrap(YYHNVQ_fake_script)()
+
+            Commands.Back.Visible = true
+            Commands.Area.Visible = true
+            Commands.Back:TweenPosition(UDim2.new(0.5,0,0.825,0),"InOut","Linear",.5)
+            Commands.Area:TweenPosition(UDim2.new(0.5,0,0.825,0),"InOut","Linear",.5)
+        end
+        if cmd == Prefix.."hidecmds" then
+            local Commands = LP.PlayerGui:FindFirstChild("Commands")
+            Commands.Back:TweenPosition(UDim2.new(0.5,0,2,0),"InOut","Linear",.5)
+            Commands.Area:TweenPosition(UDim2.new(0.5,0,2,0),"InOut","Linear",.5)
+            wait(.51)
+            Commands:Destroy()
+        end
+        if cmd == Prefix.."rejoin" or cmd == Prefix.."rej" or cmd == Prefix.."rj" then
+            local TeleportService = game:GetService("TeleportService")
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Rejoin = coroutine.create(function()
+                local Success, ErrorMessage = pcall(function()
+                    TeleportService:Teleport(game.PlaceId, LocalPlayer)
+                end)
+                if ErrorMessage and not Success then
+                    warn(ErrorMessage)
+                end
+            end)
+            coroutine.resume(Rejoin)
+        end
+        if cmd == Prefix.."serverhop" or cmd == Prefix.."sh" or cmd == Prefix.."hop" then
+            local Servers = game.HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100"))
+            for i,v in pairs(Servers.data) do
+                if v.playing ~= v.maxPlayers then
+                    game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, v.id)
+                end
+            end
+        end
+        if cmd == Prefix.."devs" then
+            notif("Developers","SpedKingSuno - Scripter + Ui Designer, ActaeonArk - Discord Server Manager")
+        end
+        if cmd == Prefix.."noclip" then
+            notif("Noclip","Noclip Status: Enabled")
+            local Stepped = game:GetService("RunService")
+            Clipon = true
+            Stepped.Stepped:Connect(function()
+                if not Clipon == false then
+                    for a, b in pairs(Workspace:GetChildren()) do
+                    if b.Name == LP.Name then
+                    for i, v in pairs(Workspace[LP.Name]:GetChildren()) do
+                    if v:IsA("BasePart") then
+                    v.CanCollide = false
+                    end end end end
+                else
+                    Stepped:Disconnect()
+                end
+            end)
+        end
+        if cmd == Prefix.."clip" then
+            notif("Noclip","Noclip Status: Disabled")
+            Clipon = false
+        end
+        if cmd == Prefix.."leave" or cmd == Prefix.."quit" then
+            LP:Kick("You have left the game!")
+        end
+        -- // Checking for game
+        if game.PlaceId == Games.PrisonLife then
+            if cmd == Prefix.."crim" or cmd == Prefix.."criminal" then
+                if args[2]:lower() == "all" or args[2]:lower() == "others" then
+                    local savedcf = GetPos()
+                    local CrimPad = workspace["Criminals Spawn"].SpawnLocation
+                    local padcf = CrimPad.CFrame
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Really red").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CrimPad.CFrame
+                    wait()
+                    CrimPad.CFrame = GetPos()
+                    CrimPad.CanCollide = false
+                    CrimPad.Transparency = 1.000
+                    CrimPad.Anchored = true
+                    repeat wait() 
+                        pcall(function()
+                            for i,v in pairs(game.Teams.Inmates:GetPlayers()) do
+                                if v ~= game.Players.LocalPlayer then
+                                    Teleport(v, CrimPad.CFrame)
+                                end
+                            end
+                            for i,v in pairs(game.Teams.Guards:GetPlayers()) do
+                                if v ~= game.Players.LocalPlayer then
+                                    Teleport(v, CrimPad.CFrame)
+                                end
+                            end
+                        end)
+                    until #game.Teams.Criminals:GetPlayers() == (#game.Players:GetPlayers()-#game.Teams.Neutral:GetPlayers())
+                    workspace.Remote.loadchar:InvokeServer()
+                    CrimPad.Transparency = 0.000
+                    CrimPad.CFrame = padcf
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                else
+                    local savedcf = GetPos()
+                    local CrimPad = workspace["Criminals Spawn"].SpawnLocation
+                    local padcf = CrimPad.CFrame
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Really red").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CrimPad.CFrame
+                    wait()
+                    CrimPad.CFrame = GetPos()
+                    CrimPad.CanCollide = false
+                    CrimPad.Transparency = 1.000
+                    CrimPad.Anchored = true
+                    Teleport(Aimed, CrimPad.CFrame)
+                    workspace.Remote.loadchar:InvokeServer()
+                    CrimPad.Transparency = 0.000
+                    CrimPad.CFrame = padcf
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                end
+            end
+            if cmd == Prefix.."to" or cmd == Prefix.."goto" then
+                local P2 = findplayer(args[2])
+                LP.Character.HumanoidRootPart.CFrame = P2.Character.HumanoidRootPart.CFrame
+            end
+            if cmd == Prefix.."yard" then
+                LP.Character.HumanoidRootPart.CFrame = Yard
+            end
+            if cmd == Prefix.."prison" then
+                LP.Character.HumanoidRootPart.CFrame = Prison
+            end
+            if cmd == Prefix.."armory" then
+                LP.Character.HumanoidRootPart.CFrame = Armory
+            end
+            if cmd == Prefix.."kill" then
+                if args[2]:lower() == "all" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Kill(v)
+                        end
+                    end
+                elseif args[2]:lower() == "others" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Kill(v)
+                        end
+                    end
+                elseif args[2]:lower() == "inmates" or args[2]:lower() == "prisoners" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright orange" then
+                                Kill(v)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "cops" or args[2]:lower() == "police" or args[2]:lower() == "guards" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright blue" then
+                                Kill(v)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "crims" or args[2]:lower() == "criminals" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Really red" then
+                                Kill(v)
+                            end
+                        end
+                    end
+                else
+                    Kill(Aimed)
+                end
+            end
+            if cmd == Prefix.."clearloops" or cmd == Prefix.."removeloops" then
+                _G.LoopBring = false -- done
+                _G.LoopKill = false -- done
+                _G.AutoGuns = false -- done
+                _G.SpamArrest = false -- done
+                _G.LoopTo = false -- done
+                _G.SpamVoid = false -- done
+                while _G.LoopKill == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Kill(v)
+                        end
+                    end
+                end
+                while _G.LoopKill == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Kill(v)
+                        end
+                    end
+                end
+                while _G.LoopKill == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Really red" then
+                                Kill(v)
+                            end
+                        end
+                    end
+                end
+                while _G.LoopKill == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright orange" then
+                                Kill(v)
+                            end
+                        end
+                    end
+                end
+                while _G.LoopKill == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright blue" then
+                                Kill(v)
+                            end
+                        end
+                    end
+                end
+                while _G.LoopKill == true do
+                    wait()
+                    Kill(findplayer(args[2]))
+                end
+                while _G.LoopBring == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                        end
+                    end
+                end
+                while _G.LoopBring == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright blue" then
+                                Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                            end
+                        end
+                    end
+                end
+                while _G.LoopBring == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Really red" then
+                                Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                            end
+                        end
+                    end
+                end
+                while _G.LoopBring == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright orange" then
+                                Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                            end
+                        end
+                    end
+                end
+                while _G.LoopBring == true do
+                    wait()
+                    Teleport(findplayer(args[2]),LP.Character.HumanoidRootPart.CFrame)
+                end
+                while _G.LoopTo == true do
+                    wait()
+                    local targ = findplayer(args[2])
+                    LP.Character.HumanoidRootPart.CFrame = targ.Character.HumanoidRootPart.CFrame * CFrame.new(3.5,0,0)
+                end
+                while _G.AutoGuns == true do
+                    wait()
+                    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP)
+                    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["M9"].ITEMPICKUP)
+                    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["AK-47"].ITEMPICKUP)
+                end
+                while _G.SpamArrest == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Really red" then
+                                Arrest(v, 30)
+                            end
+                        end
+                    end
+                end
+                while _G.SpamArrest == true do
+                    wait()
+                    Arrest(findplayer(args[2]))
+                end
+                while _G.SpamVoid == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Teleport(v,Void)
+                        end
+                    end
+                end
+                while _G.SpamVoid == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright orange" then
+                                Teleport(v,Void)
+                            end
+                        end
+                    end
+                end
+                while _G.SpamVoid == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright blue" then
+                                Teleport(v,Void)
+                            end
+                        end
+                    end
+                end
+                while _G.SpamVoid == true do
+                    wait()
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Really red" then
+                                Teleport(v,Void)
+                            end
+                        end
+                    end
+                end
+                while _G.SpamVoid == true do
+                    wait()
+                    Teleport(findplayer(args[2]),Void)
+                end
+            end
+            if cmd == Prefix.."nexus" then
+                LP.Character.HumanoidRootPart.CFrame = Nexus
+            end
+            if cmd == Prefix.."cafe" then
+                LP.Character.HumanoidRootPart.CFrame = Cafe
+            end
+            if cmd == Prefix.."backnexus" then
+                LP.Character.HumanoidRootPart.CFrame = BackNexus
+            end
+            if cmd == Prefix.."gate" then
+                LP.Character.HumanoidRootPart.CFrame = Gate
+            end
+            if cmd == Prefix.."tower" then
+                LP.Character.HumanoidRootPart.CFrame = Tower
+            end
+            if cmd == Prefix.."gatetower" then
+                LP.Character.HumanoidRootPart.CFrame = GateTower
+            end
+            if cmd == Prefix.."sewer" then
+                LP.Character.HumanoidRootPart.CFrame = Sewer
+            end
+            if cmd == Prefix.."bring" then
+                if args[2]:lower() == "all" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Teleport(v, GetPos())
+                        end
+                    end
+                elseif args[2]:lower() == "others" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Teleport(v, GetPos())
+                        end
+                    end
+                elseif args[2]:lower() == "inmates" or args[2]:lower() == "prisoners" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright orange" then
+                                Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "cops" or args[2]:lower() == "police" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright blue" then
+                                Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "crims" or args[2]:lower() == "criminals" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Really red" then
+                                Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                            end
+                        end
+                    end
+                else
+                    Teleport(findplayer(args[2]),LP.Character.HumanoidRootPart.CFrame)
+                end
+            end
+            if cmd == Prefix.."base" then
+                LP.Character.HumanoidRootPart.CFrame = Base
+            end
+            if cmd == Prefix.."void" then
+                if args[2]:lower() == "all" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Teleport(v,Void)
+                        end
+                    end
+                elseif args[2]:lower() == "others" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Teleport(v,Void)
+                        end
+                    end
+                elseif args[2]:lower() == "inmates" or args[2]:lower() == "prisoners" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright orange" then
+                                Teleport(v,Void)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "cops" or args[2]:lower() == "police" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright blue" then
+                                Teleport(v,Void)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "crims" or args[2]:lower() == "criminals" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Really red" then
+                                Teleport(v,Void)
+                            end
+                        end
+                    end
+                else
+                    Teleport(findplayer(args[2]),Void)
+                end
+            end
+            if cmd == Prefix.."arrest" then
+                if args[2]:lower() == "all" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Really red" then
+                                Arrest(v, 30)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "others" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Really red" then
+                                Arrest(v, 30)
+                            end
+                        end
+                    end
+                else
+                    Arrest(findplayer(args[2]))
+                end
+            end
+            if cmd == Prefix.."trap" then
+                LP.Character.HumanoidRootPart.CFrame = Trap
+                if args[2]:lower() == "all" or args[2]:lower() == "others" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            Teleport(v, Trap)
+                        end
+                    end
+                elseif args[2]:lower() == "police" or args[2]:lower() == "cops" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright blue" then
+                                Teleport(v,Trap)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "crims" or args[2]:lower() == "criminals" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Really red" then
+                                Teleport(v,Trap)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "prisoners" or args[2]:lower() == "inmates" then
+                    for i,v in pairs(game.Players:GetPlayers()) do
+                        if v ~= game.Players.LocalPlayer then
+                            if v.TeamColor.Name == "Bright orange" then
+                                Teleport(v,Trap)
+                            end
+                        end
+                    end
+                else
+                    Teleport(findplayer(args[2]),Trap)
+                end
+            end
+            if cmd == Prefix.."loopkill" or cmd == Prefix.."lk" then
+                if args[2]:lower() == "all" then
+                    _G.LoopKill = true
+                    while _G.LoopKill == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                Kill(v)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "others" then
+                    _G.LoopKill = true
+                    while _G.LoopKill == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                Kill(v)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "inmates" or args[2]:lower() == "prisoners" then
+                    _G.LoopKill = true
+                    while _G.LoopKill == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright orange" then
+                                    Kill(v)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "cops" or args[2]:lower() == "police" then
+                    _G.LoopKill = true
+                    while _G.LoopKill == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright blue" then
+                                    Kill(v)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "crims" or args[2]:lower() == "criminals" then
+                    _G.LoopKill = true
+                    while _G.LoopKill == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Really red" then
+                                    Kill(v)
+                                end
+                            end
+                        end
+                    end
+                else
+                    _G.LoopKill = true
+                    while _G.LoopKill == true do
+                        wait()
+                        Kill(findplayer(args[2]))
+                    end
+                end
+            end
+            if cmd == Prefix.."unlk" or cmd == Prefix.."unloopkill" then
+                if args[2]:lower() == "all" then
+                    _G.LoopKill = false
+                    while _G.LoopKill == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                Kill(v)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "others" then
+                    _G.LoopKill = false
+                    while _G.LoopKill == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                Kill(v)
+                            end
+                        end
+                    end
+                    elseif args[2]:lower() == "crims" or args[2]:lower() == "criminals" then
+                        _G.LoopKill = false
+                        while _G.LoopKill == true do
+                            wait()
+                            for i,v in pairs(game.Players:GetPlayers()) do
+                                if v ~= game.Players.LocalPlayer then
+                                    if v.TeamColor.Name == "Really red" then
+                                        Kill(v)
+                                    end
+                                end
+                            end
+                        end
+                elseif args[2]:lower() == "inmates" or args[2]:lower() == "prisoners" then
+                    _G.LoopKill = false
+                    while _G.LoopKill == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright orange" then
+                                    Kill(v)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "cops" or args[2]:lower() == "police" then
+                    _G.LoopKill = false
+                    while _G.LoopKill == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright blue" then
+                                    Kill(v)
+                                end
+                            end
+                        end
+                    end
+                else
+                    _G.LoopKill = false
+                    while _G.LoopKill == true do
+                        wait()
+                        Kill(findplayer(args[2]))
+                    end
+                end
+            end
+            if cmd == Prefix.."lb" or cmd == Prefix.."loopbring" then
+                if args[2]:lower() == "all" or args[2]:lower() == "others" then
+                    _G.LoopBring = true
+                    while _G.LoopBring == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "cop" or args[2]:lower() == "police" then
+                    _G.LoopBring = true
+                    while _G.LoopBring == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright blue" then
+                                    Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "crims" or args[2]:lower() == "crimianls" then
+                    _G.LoopBring = true
+                    while _G.LoopBring == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Really red" then
+                                    Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "prisoners" or args[2]:lower() == "inmate" then
+                    _G.LoopBring = true
+                    while _G.LoopBring == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright orange" then
+                                    Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                                end
+                            end
+                        end
+                    end
+                else
+                    _G.LoopBring = true
+                    while _G.LoopBring == true do
+                        wait()
+                        Teleport(findplayer(args[2]),LP.Character.HumanoidRootPart.CFrame)
+                    end
+                end
+            end
+            if cmd == Prefix.."unlb" or cmd == Prefix.."unloopbring" then
+                if args[2]:lower() == "all" or args[2]:lower() == "others" then
+                    _G.LoopBring = false
+                    while _G.LoopBring == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "cop" or args[2]:lower() == "police" then
+                    _G.LoopBring = false
+                    while _G.LoopBring == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright blue" then
+                                    Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "crims" or args[2]:lower() == "crimianls" then
+                    _G.LoopBring = false
+                    while _G.LoopBring == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Really red" then
+                                    Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "prisoners" or args[2]:lower() == "inmate" then
+                    _G.LoopBring = false
+                    while _G.LoopBring == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright orange" then
+                                    Teleport(v,LP.Character.HumanoidRootPart.CFrame)
+                                end
+                            end
+                        end
+                    end
+                else
+                    _G.LoopBring = false
+                    while _G.LoopBring == true do
+                        wait()
+                        Teleport(findplayer(args[2]),LP.Character.HumanoidRootPart.CFrame)
+                    end
+                end
+            end
+            if cmd == Prefix.."key" or cmd == Prefix.."getkey" then
+                    repeat
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright blue" then
+                                    wait()
+                                    Kill(v)
+                                end
+                            end
+                        end
+                    until workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single:FindFirstChild("Key card").ITEMPICKUP)
+            end
+            if cmd == Prefix.."refresh" or cmd == Prefix.."ref" or cmd == Prefix.."re" then
+                LP.Character:BreakJoints()
+            end
+            if cmd == Prefix.."color" or cmd == Prefix.."rgb" then
+                if args[2]:lower() == "blue" then
+                    local savedcf = GetPos()
+                    local savedcamcf = GetCamPos()
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Deep blue").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                    workspace.CurrentCamera.CFrame = savedcamcf
+                elseif args[2]:lower() == "black" then
+                    local savedcf = GetPos()
+                    local savedcamcf = GetCamPos()
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Really black").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                    workspace.CurrentCamera.CFrame = savedcamcf
+                elseif args[2]:lower() == "pink" then
+                    local savedcf = GetPos()
+                    local savedcamcf = GetCamPos()
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Hot pink").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                    workspace.CurrentCamera.CFrame = savedcamcf
+                elseif args[2]:lower() == "grey" then
+                    local savedcf = GetPos()
+                    local savedcamcf = GetCamPos()
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Ghost grey").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                    workspace.CurrentCamera.CFrame = savedcamcf
+                elseif args[2]:lower() == "brown" then
+                    local savedcf = GetPos()
+                    local savedcamcf = GetCamPos()
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Brown").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                    workspace.CurrentCamera.CFrame = savedcamcf
+                elseif args[2]:lower() == "purple" then
+                    local savedcf = GetPos()
+                    local savedcamcf = GetCamPos()
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Royal purple").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                    workspace.CurrentCamera.CFrame = savedcamcf
+                elseif args[2]:lower() == "green" then
+                    local savedcf = GetPos()
+                    local savedcamcf = GetCamPos()
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Bright green").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                    workspace.CurrentCamera.CFrame = savedcamcf
+                elseif args[2]:lower() == "yellow" then
+                    local savedcf = GetPos()
+                    local savedcamcf = GetCamPos()
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Bright yellow").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                    workspace.CurrentCamera.CFrame = savedcamcf
+                elseif args[2]:lower() == "orange" then
+                    local savedcf = GetPos()
+                    local savedcamcf = GetCamPos()
+                    workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Neon orange").Name)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = savedcf
+                    workspace.CurrentCamera.CFrame = savedcamcf
+                end
+            end
+            if cmd == Prefix.."loopgoto" or cmd == Prefix.."loopto" then
+                _G.LoopTo = true
+                local targ = findplayer(args[2])
+                while _G.LoopTo == true do
+                    wait()
+                    LP.Character.HumanoidRootPart.CFrame = targ.Character.HumanoidRootPart.CFrame * CFrame.new(3.5,0,0)
+                end
+            end
+            if cmd == Prefix.."unloopgoto" or cmd == Prefix.."unloopto" then
+                _G.LoopTo = false
+                local targ = findplayer(args[2])
+                while _G.LoopTo == true do
+                    wait()
+                    LP.Character.HumanoidRootPart.CFrame = targ.Character.HumanoidRootPart.CFrame * CFrame.new(3.5,0,0)
+                end
+            end
+            if cmd == Prefix.."admin" or cmd == Prefix.."rank" then
+                local Player = findplayer(args[2])
+                if Player ~= nil and not Admin[Player.UserId] then
+                    Admin[Player.UserId] = {Player = Player}
+                    talk("/w "..Player.Name.." You've been ranked by "..LP.Name.."! Type "..Prefix.."cmds or "..Prefix.."commands to see a list of commands.")
+                    notif("Admin","Ranked "..Player.Name)
+                else
+                    notif("Admin","Error!",Invalid,1)
+                end
+            end
+            if cmd == Prefix.."unadmin" or cmd == Prefix.."unrank" then
+                local Player = findplayer(args[2])
+                if Player ~= nil and Admin[Player.UserId] then
+                    Admin[Player.userId] = nil
+                    talk("/w "..Player.Name.." You have been unranked by "..LP.Name.."")
+                    notif("Admin","Unranked "..Player.Name)
+                else
+                    notif("Admin","Error!",Invalid,1)
+                end
+            end
+            if cmd == Prefix.."guns" then
+                notif("Guns","Given all guns to "..LP.DisplayName.."")
+                Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP)
+                Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["M9"].ITEMPICKUP)
+                Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["AK-47"].ITEMPICKUP)
+            end
+            if cmd == Prefix.."spamarrest" or cmd == Prefix.."autoarrest" then
+                if args[2]:lower() == "all" then
+                    _G.SpamArrest = true
+                    while _G.SpamArrest == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Really red" then
+                                    Arrest(v, 30)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "others" then
+                    _G.SpamArrest = true
+                    while _G.SpamArrest == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Really red" then
+                                    Arrest(v, 30)
+                                end
+                            end
+                        end
+                    end
+                else
+                    _G.SpamArrest = true
+                    while _G.SpamArrest == true do
+                        wait()
+                        Arrest(findplayer(args[2]))
+                    end
+                end
+            end
+            if cmd == Prefix.."unspamarrest" or cmd == Prefix.."unautoarrest" then
+                if args[2]:lower() == "all" then
+                    _G.SpamArrest = false
+                    while _G.SpamArrest == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Really red" then
+                                    Arrest(v, 30)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "others" then
+                    _G.SpamArrest = false
+                    while _G.SpamArrest == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Really red" then
+                                    Arrest(v, 30)
+                                end
+                            end
+                        end
+                    end
+                else
+                    _G.SpamArrest = false
+                    while _G.SpamArrest == true do
+                        wait()
+                        Arrest(findplayer(args[2]))
+                    end
+                end
+            end
+            if cmd == Prefix.."spamvoid" or cmd == Prefix.."autovoid" then
+                if args[2]:lower() == "all" then
+                    _G.SpamVoid = true
+                    while _G.SpamVoid == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                Teleport(v,Void)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "others" then
+                    _G.SpamVoid = true
+                    while _G.SpamVoid == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                Teleport(v,Void)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "inmates" or args[2]:lower() == "prisoners" then
+                    _G.SpamVoid = true
+                    while _G.SpamVoid == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright orange" then
+                                    Teleport(v,Void)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "cops" or args[2]:lower() == "police" then
+                    _G.SpamVoid = true
+                    while _G.SpamVoid == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright blue" then
+                                    Teleport(v,Void)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "crims" or args[2]:lower() == "criminals" then
+                    _G.SpamVoid = true
+                    while _G.SpamVoid == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Really red" then
+                                    Teleport(v,Void)
+                                end
+                            end
+                        end
+                    end
+                else
+                    _G.SpamVoid = true
+                    while _G.SpamVoid == true do
+                        wait()
+                        Teleport(findplayer(args[2]),Void)
+                    end
+                end
+            end
+            if cmd == Prefix.."unspamvoid" or cmd == Prefix.."unautovoid" then
+                if args[2]:lower() == "all" then
+                    _G.SpamVoid = false
+                    while _G.SpamVoid == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                Teleport(v,Void)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "others" then
+                    _G.SpamVoid = false
+                    while _G.SpamVoid == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                Teleport(v,Void)
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "inmates" or args[2]:lower() == "prisoners" then
+                    _G.SpamVoid = false
+                    while _G.SpamVoid == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright orange" then
+                                    Teleport(v,Void)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "cops" or args[2]:lower() == "police" then
+                    _G.SpamVoid = false
+                    while _G.SpamVoid == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Bright blue" then
+                                    Teleport(v,Void)
+                                end
+                            end
+                        end
+                    end
+                elseif args[2]:lower() == "crims" or args[2]:lower() == "criminals" then
+                    _G.SpamVoid = false
+                    while _G.SpamVoid == true do
+                        wait()
+                        for i,v in pairs(game.Players:GetPlayers()) do
+                            if v ~= game.Players.LocalPlayer then
+                                if v.TeamColor.Name == "Really red" then
+                                    Teleport(v,Void)
+                                end
+                            end
+                        end
+                    end
+                else
+                    _G.SpamVoid = false
+                    while _G.SpamVoid == true do
+                        wait()
+                        Teleport(findplayer(args[2]),Void)
+                    end
+                end
+            end
+            if cmd == Prefix.."autoguns" then
+                notif("Guns","Now automatically giving all guns")
+                _G.AutoGuns = true
+                while _G.AutoGuns == true do
+                    wait()
+                    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP)
+                    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["M9"].ITEMPICKUP)
+                    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["AK-47"].ITEMPICKUP)
+                end
+            end
+            if cmd == Prefix.."noautoguns" or cmd == Prefix.."unautoguns" then
+                notif("Guns","Stopps automatically giving all guns")
+                _G.AutoGuns = false
+                while _G.AutoGuns == true do
+                    wait()
+                    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP)
+                    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["M9"].ITEMPICKUP)
+                    Workspace.Remote.ItemHandler:InvokeServer(Workspace.Prison_ITEMS.giver["AK-47"].ITEMPICKUP)
+                end
+            end
+            if cmd == Prefix.."hell" then
+                LP.Character.HumanoidRootPart.CFrame = Hell
+            end
+        end
+    end)
+
+    -- // Loopings
+    
+    _G.Loop = true
+    while _G.Loop == true do
+        wait()
+        local TitleBar = PlayUi:FindFirstChild("Home"):FindFirstChild("hud"):FindFirstChild("Topbar"):FindFirstChild("titleBar")
+        TitleBar.Title.Text = "Sin's Admin"
+        TitleBar.Title.TextSize = 30
+        TitleBar.Title.TextScaled = false
+        local PullDownMen = PlayUi:FindFirstChild("Home"):FindFirstChild("hud"):FindFirstChild("Topbar"):FindFirstChild("Pulldownmenu"):FindFirstChild("Frame")
+        PullDownMen.Description.Text = "Sin's Admin commands was made on 12/18/2021, Created by SpedKingSuno (KingSuno#9767) and ActaeonArk (ActaeonArk#1723)."
+        if game.Players.LocalPlayer.Character.Humanoid.Health <= 15 then
+            local location = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            local A_1 = "\66\114\111\121\111\117\98\97\100\100"
+            local Event = game:GetService("Workspace").Remote.loadchar
+            Event:InvokeServer(A_1)
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = location
+        end
+    end
+end
+
+if game.PlaceId == Games.R6Baseplate then
+
+    -- // Notifying
+
+    notif("Ranked","Say "..Prefix.."cmds for cmds",Valid,1)
+    wait(1)
+    notif("Version","On Version: "..Vers.."!",Valid,1)
+
+    -- // Cmds
+
+    LP.Chatted:Connect(function(msg)
+        local args = msg:split(" ")
+        local cmd = args[1]
+        if cmd == Prefix.."cmds" or cmd == Prefix.."commands" then
+            local Commands = Instance.new("ScreenGui")
+            local Area = Instance.new("Frame")
+            local UICorner = Instance.new("UICorner")
+            local Back = Instance.new("Frame")
+            local UICorner_2 = Instance.new("UICorner")
+            local Items = Instance.new("ScrollingFrame")
+            local UIListLayout = Instance.new("UIListLayout")
+            Commands.Name = "Commands"
+            Commands.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+            Commands.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+            Area.Name = "Area"
+            Area.Parent = Commands
+            Area.AnchorPoint = Vector2.new(0.5, 0.5)
+            Area.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            Area.BackgroundTransparency = 0.800
+            Area.Position = UDim2.new(0.5, 0, 2, 0)
+            Area.Size = UDim2.new(0, 331, 0, 331)
+
+            UICorner.CornerRadius = UDim.new(0, 3)
+            UICorner.Parent = Area
+
+            Back.Name = "Back"
+            Back.Parent = Commands
+            Back.AnchorPoint = Vector2.new(0.5, 0.5)
+            Back.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+            Back.Position = UDim2.new(0.5, 0, 2, 0)
+            Back.Size = UDim2.new(0, 325, 0, 325)
+
+            UICorner_2.CornerRadius = UDim.new(0, 3)
+            UICorner_2.Parent = Back
+
+            Items.Name = "Items"
+            Items.Parent = Back
+            Items.Active = true
+            Items.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            Items.BackgroundTransparency = 1.000
+            Items.Position = UDim2.new(0.0276923068, 0, 0.0338461548, 0)
+            Items.Size = UDim2.new(0, 307, 0, 302)
+            Items.CanvasSize = UDim2.new(0, 0, 4.37, 0)
+            Items.ScrollBarThickness = 0
+
+            UIListLayout.Parent = Items
+            UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+            UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            local function YYHNVQ_fake_script() -- Commands.Cmd 
+                local script = Instance.new('LocalScript', Commands)
+
+                local c = {}
+                
+                function c(text)
+                    local Command = Instance.new("TextLabel")
+                    Command.Name = "Command"
+                    Command.Parent = game.Players.LocalPlayer.PlayerGui.Commands.Back.Items
+                    Command.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    Command.BackgroundTransparency = 1.000
+                    Command.Position = UDim2.new(0.174267098, 0, 0, 0)
+                    Command.Size = UDim2.new(0, 200, 0, 29)
+                    Command.Font = Enum.Font.GothamSemibold
+                    Command.Text = text
+                    Command.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    Command.TextSize = 14.000
+                end
+                
+                c("cmds / commands")
+                c("hidecmds")
+                c("rejoin / rj / rej")
+                c("serverhop / hop / sh")
+                c("devs")
+                c("noclip [other: clip]")
+                c("leave / quit")
+                c("neko")
+                c("chill")
+                c("wallwalk")
+                c("joy")
+                c("sonic")
+                c("ultimatememedance")
+                c("spider")
+                c("xester")
+                c("elioblasio")
+                c("galefighter")
+                c("oldanim / oldanimation")
+                c("caducus")
+                c("saness")
+                c("ballspin")
+                c("chips")
+                c("table")
+                c("squatman")
+                c("russiankick")
+                c("wall")
+                c("chair")
+                c("pyramid")
+                c("gun")
+                c("cop")
+                c("stilts")
+                c("eggdog")
+                c("smug")
+                c("takethel")
+                c("defaultdance")
+                c("floss")
+                c("orangejustice")
+                c("broomstick")
+                c("goopie")
+                c("minigun")
+                c("boogiedown")
+                c("flip")
+                c("skateboard")
+                c("memeus")
+                c("christmasscythe / xmasscythe")
+                c("retarddance")
+                c("longlegs")
+                c("ender")
+                c("achromatic")
+            end
+            coroutine.wrap(YYHNVQ_fake_script)()
+
+            Commands.Back.Visible = true
+            Commands.Area.Visible = true
+            Commands.Back:TweenPosition(UDim2.new(0.5,0,0.825,0),"InOut","Linear",.5)
+            Commands.Area:TweenPosition(UDim2.new(0.5,0,0.825,0),"InOut","Linear",.5)
+        end
+        if cmd == Prefix.."hidecmds" then
+            local Commands = LP.PlayerGui:FindFirstChild("Commands")
+            Commands.Back:TweenPosition(UDim2.new(0.5,0,2,0),"InOut","Linear",.5)
+            Commands.Area:TweenPosition(UDim2.new(0.5,0,2,0),"InOut","Linear",.5)
+            wait(.51)
+            Commands:Destroy()
+        end
+        if cmd == Prefix.."rejoin" or cmd == Prefix.."rej" or cmd == Prefix.."rj" then
+            local TeleportService = game:GetService("TeleportService")
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Rejoin = coroutine.create(function()
+                local Success, ErrorMessage = pcall(function()
+                    TeleportService:Teleport(game.PlaceId, LocalPlayer)
+                end)
+                if ErrorMessage and not Success then
+                    warn(ErrorMessage)
+                end
+            end)
+            coroutine.resume(Rejoin)
+        end
+        if cmd == Prefix.."serverhop" or cmd == Prefix.."sh" or cmd == Prefix.."hop" or cmd == Prefix.."shop" then
+            local Servers = game.HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100"))
+            for i,v in pairs(Servers.data) do
+                if v.playing ~= v.maxPlayers then
+                    game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, v.id)
+                end
+            end
+        end
+        if cmd == Prefix.."devs" then
+            notif("Owner, ","Lead Developer",Owner,1)
+            notif("Co-Owner, ","Side Developer",CoOwner,1)
+        end
+        if cmd == Prefix.."noclip" then
+            local Stepped = game:GetService("RunService")
+            Clipon = true
+            Stepped.Stepped:Connect(function()
+                if not Clipon == false then
+                    for a, b in pairs(Workspace:GetChildren()) do
+                    if b.Name == LP.Name then
+                    for i, v in pairs(Workspace[LP.Name]:GetChildren()) do
+                    if v:IsA("BasePart") then
+                    v.CanCollide = false
+                    end end end end
+                else
+                    Stepped:Disconnect()
+                end
+            end)
+        end
+        if cmd == Prefix.."clip" then
+            Clipon = false
+        end
+        if cmd == Prefix.."leave" or cmd == Prefix.."quit" then
+            LP:Kick("You have left the game!")
+        end
+        if game.PlaceId == Games.R6Baseplate then
+            if cmd == Prefix.."neko" then
+                chatnotify("Keys: R - Lie Down",Color3.fromRGB(255,255,255))
+                Load("https://pastebin.com/raw/7i7CsTPe")
+            end
+            if cmd == Prefix.."chill" then
+                Load("https://pastebin.com/raw/XmHFdTij")
+            end
+            if cmd == Prefix.."wallwalk" then
+                Load("https://pastebin.com/raw/XdT9eTPf")
+            end
+            if cmd == Prefix.."joy" then
+                chatnotify("Keys: F - Dance, E - EeeEee, T - Herobrine",Color3.fromRGB(255,255,255))
+                Load("https://pastebin.com/raw/LEAQuKj0")
+            end
+            if cmd == Prefix.."sonic" then
+                chatnotify("Keys: Q - Dash Left, E - Dash Right, C - Slide, M - Spin & Explode",Color3.fromRGB(255,255,255))
+                Load("https://pastebin.com/raw/SyF5t70A")
+            end
+            if cmd == Prefix.."ultimatememedance" then
+                talk("Keys: F - Raise Hand, T - Dance1, F - Slap My Hand!, G - Idle Stand, H - Hm.. Maybe, B - Shoot")
+                Load("https://pastebin.com/raw/0QfjMKrF")
+            end
+            if cmd == Prefix.."spider" then
+                Load("https://pastebin.com/raw/txsk1LJg")
+            end
+            if cmd == Prefix.."galefighter" then
+                talk("Keys: R - Kick, T - Talkin..., F - Combo Kick, ")
+                Load("https://pastebin.com/raw/umAcjdPQ")
+            end
+            if cmd == Prefix.."chips" then
+                chatnotify("Keys: F + N + M + B - Change Chips + Song, Z - How it feels to chew 5 gum, X - aahhhh, C - Bahahahahahahhaahaahaahaah, Click - Hit",Color3.fromRGB(255,255,255))
+                Load("https://pastebin.com/raw/b289ts36")
+            end
+            if cmd == Prefix.."table" then
+                Load("https://pastebin.com/raw/9kDrHnUd")
+            end
+            if cmd == Prefix.."squatman" then
+                Load("https://pastebin.com/raw/vaaTD17s")
+            end
+            if cmd == Prefix.."oldanim" or cmd == Prefix.."oldanimation" then
+                Load("https://pastebin.com/raw/Vpe4VE9D")
+            end 
+            if cmd == Prefix.."xester" then
+                loadstring(game:HttpGetAsync("https://pastebin.com/raw/RPwyPvEi"))()
+            end
+            if cmd == Prefix.."elioblasio" then
+                loadstring(game:HttpGetAsync("https://pastebin.com/raw/xvBXu6Yc"))()
+            end
+            if cmd == Prefix.."caducus" then
+                loadstring(game:HttpGetAsync("https://pastebin.com/raw/jfryBKds"))()
+            end
+            if cmd == Prefix.."saness" then
+                Load("https://pastebin.com/raw/ip9n0nSn")
+            end
+            if cmd == Prefix.."russiankick" then
+                Load("https://pastebin.com/raw/1P37qYeV")
+            end
+            if cmd == Prefix.."takethel" then
+                Load("https://pastebin.com/raw/VkWkuyzc")
+            end
+            if cmd == Prefix.."smug" then
+                Load("https://pastebin.com/raw/NKub3B4R")
+            end
+            if cmd == Prefix.."defaultdance" then
+                Load("https://pastebin.com/raw/iXAe7Fub")
+            end
+            if cmd == Prefix.."floss" then
+                Load("https://pastebin.com/raw/JfyvWHLf")
+            end
+            if cmd == Prefix.."orangejustice" then
+                Load("https://pastebin.com/raw/Efg0DgkP")
+            end
+            if cmd == Prefix.."cop" then
+                chatnotify("Hats Needed: Type-37-Pulse-Rifle, Miami-Sunshine-Slugger")
+                Load("https://pastebin.com/raw/VAA5Mf60")
+            end
+            if cmd == Prefix.."broomstick" then
+                chatnotify("Hats Needed: Witch-Wizard-Broom-Classic")
+                Load("https://pastebin.com/raw/PcP5cEYU")
+            end
+            if cmd == Prefix.."goopie" then
+                Load("https://pastebin.com/raw/fKLm580i")
+            end
+            if cmd == Prefix.."minigun" then
+                chatnotify("Hats Needed: Type-40-Juggernauts-Chain-Gun")
+                Load("https://pastebin.com/raw/sK9EUPE6")
+            end
+            if cmd == Prefix.."boogiedown" then
+                Load("https://pastebin.com/raw/6DzXfYzy")
+            end
+            if cmd == Prefix.."flip" then
+                chatnotify("Keys: Z - Front flip, X - Back flip, C - Air Jump")
+                Load("https://pastebin.com/raw/crPcd0vq")
+            end
+            if cmd == Prefix.."skateboard" then
+                chatnotify("Hats Needed: COLD-STARE-SKATEBOARD")
+                Load("https://pastebin.com/raw/XAXCaupJ")
+            end
+            if cmd == Prefix.."memeus" then
+                loadstring(game:HttpGetAsync("https://pastebin.com/raw/2MSTmKBa"))()
+            end
+            if cmd == Prefix.."xmascythe" or cmd == Prefix.."christmasscythe" then
+                chatnotify("Hats Needed: Christmas-Scythe")
+                Load("https://pastebin.com/raw/fXwQRn7f") -- // net bypasser
+                Load("https://pastebin.com/raw/Ak4YmC3f") -- script thingy
+            end
+            if cmd == Prefix.."retarddance" then
+                Load("https://pastebin.com/raw/5ddwJ7tP")
+            end
+            if cmd == Prefix.."longlegs" then
+                Load("https://pastebin.com/raw/2vbYR75P")
+            end
+            if cmd == Prefix.."chair" then
+                Load("https://pastebin.com/raw/uN6c86e1")
+            end
+            if cmd == Prefix.."wall" then
+                Load("https://pastebin.com/raw/AY6kA2AV")
+            end
+            if cmd == Prefix.."pyramid" then
+                Load("https://pastebin.com/raw/47FxhPef")
+            end
+            if cmd == Prefix.."gun" then
+                chatnotify("Hats Needed: Type-37-Pulse-Rifle")
+                Load("https://pastebin.com/raw/pBGMeF5U")
+            end
+            if cmd == Prefix.."eggdog" then
+                chatnotify("Hats Needed: E-G-G-D-O-G, Elitoria-RN750")
+                Load("https://pastebin.com/raw/rkAD6D4J")
+            end
+            if cmd == Prefix.."ender" then
+                Load("https://pastebin.com/raw/GJ1xG1wr")
+            end
+            if cmd == Prefix.."minecraft" then
+                Load("https://pastebin.com/raw/GhuEe6du")
+            end
+            if cmd == Prefix.."ballspin" then
+                Load("https://pastebin.com/raw/EJskzezp")
+            end
+            if cmd == Prefix.."achromatic" then
+                chatnotify("Hats Needed: 10 free fedoras")
+                Load("https://pastebin.com/raw/14auMbe3")
+            end
+        end
+    end)
+
+    loadstring(game:HttpGet(('https://pastebin.com/raw/Cu7bKQWN'),true))()
+
+end
+   
+
+   end})
+
+
+
+J:AddLabel({text = 'Aimbot',state = false,callback = function(s)
+
+end})
+
+J:AddButton({text = 'Load Aimbot',state = false,callback = function(s)
+
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt"))();
+
+end})
+
+
+
+   
+uni:AddBind({text = "UI Bind", key = "LeftControl", save = true, callback = function() library:Close() end})
+library:Init()
+
+
+
+
